@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useFoodDataMutate } from '../../hooks/useFoodDataMutate'
 import { FoodData } from '../../interface/FoodData'
 import "./create-modal.css"
@@ -17,12 +17,13 @@ const Input = ({label, value, updateValue}: InputProps) => {
     return(
         <>
             <label >{label}</label>
-            <input value={value} onChange={e => updateValue(e.target.value)} ></input>
+            <input value={value} onChange={e => updateValue(e.target.value)} required></input>
         </>
     )
 }
 
-const createModal = ({closeModal}: ModalProps) => {
+const createModal = ( {closeModal}: ModalProps ) => {
+
     const [title, setTitle] = useState("");
     const [price, setPrice] = useState(0);
     const [image, setImage] = useState("");
@@ -37,13 +38,26 @@ const createModal = ({closeModal}: ModalProps) => {
         mutate(foodData)
     }
 
-    useEffect(()=>{
+    const veryInputs = () =>{
+        if(title==""){
+            alert("Adicione um titulo")
+        }else if(price==0){
+            alert("Adicione um preço")
+        }else if(image==""){
+            alert("Adicione uma imagem")
+        }else{
+            submit()
+        }
+    }
+
+    useEffect( () => {
         if(!isSuccess) return
         closeModal()
-    }, [isSuccess])
+    }, [isSuccess] )
 
   return (
     <div className='modal-overlay'>
+        <div className='fade' onClick={closeModal}></div>
         <div className="modal-body">
             <h2>Cadastre um novo item no cardápio</h2>
             <form className="input-container">
@@ -51,7 +65,7 @@ const createModal = ({closeModal}: ModalProps) => {
                 <Input label='price' value={price} updateValue={setPrice}/>
                 <Input label='image' value={image} updateValue={setImage}/>
             </form>
-            <button onClick={submit} className='btn-secondary'>
+            <button onClick={veryInputs} className='btn-secondary'>
                 {isPending ? 'Postando...' : 'Postar'}
             </button>
         </div>
